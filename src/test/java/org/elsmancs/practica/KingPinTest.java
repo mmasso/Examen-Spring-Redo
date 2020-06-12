@@ -308,6 +308,35 @@ public class KingPinTest {
 		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 		.andExpect(content().json("{nombre : 'McCracken', destreza: 100}"));
 	}
+    
+	/**
+     * Da de alta una orden de inscripción empleando sólo el método POST en la url
+     *    /ordena
+     * Los parametros post necesarios son "usuaria" con el nombre de la persona
+	 * e "item" con el nombre del torneo.
+     * La peticion ha de retornar el texto "OK" si la orden de inscripción ha sido generada
+	 * y "KO" en caso contrario.
+     */
+	@Test
+    public void test_post() throws Exception {
+
+		this.mockMvc.perform(post("/ordena")
+		.param("usuaria", "McCracken")
+		.param("item", "Murfreesboro Strike and Spare"))
+		.andExpect(status().isOk())
+		.andExpect(content().string("OK"));
+
+		// La orden se ha guardado en la BBDD
+		List<Orden> ordenes = servicio.listarOrdenesUser("McCracken");
+		assertEquals(1, ordenes.size());
+		assertFalse(ordenes.contains(null));
+
+		// Si la usuaria no existe el controlador devuelve el texto "KO"
+		this.mockMvc.perform(post("/ordena")
+		.param("usuaria", "Ishmael")
+		.param("item", "Murfreesboro Strike and Spare"))
+		.andExpect(status().isOk()).andExpect(content().string("KO"));
+	}
 
 
 	

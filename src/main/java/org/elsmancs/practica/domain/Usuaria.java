@@ -34,9 +34,4 @@ public class Usuaria {
 		this.destreza = destreza;
 	}
 	
-	@Override
-	public String toString() {
-		return this.getNombre() + this.getDestreza();
-	}
-	
 }
