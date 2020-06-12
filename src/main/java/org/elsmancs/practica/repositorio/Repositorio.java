@@ -70,19 +70,12 @@ public class Repositorio {
 	}
 	
 	public List<Orden> listarOrdenesUser(String nombre) {
-		TypedQuery<Long> query = em.createQuery( "select order.id from Orden order join Usuaria usuaria where order.user.nombre = :nom", Long.class);
+		TypedQuery<Orden> query = em.createQuery( "select order from Orden order where order.user.nombre = :nom", Orden.class);
 		query.setParameter("nom", nombre);
-		List<Long> idList = query.getResultList();
-		for(id: idList) {
-			em.find(Order.class, id)
-		}
-		return resultat;
+		List<Orden> ordersList = query.getResultList();
+		return ordersList;
 	}
-
-	
-	
-	
-	}
+}
 
 
 	
