@@ -11,11 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class Servicio {
-	
 
 	@Autowired
 	Repositorio repositori;
-	
+
 	public List<Orden> listarOrdenesUser(String nombre) {
 		return repositori.listarOrdenesUser(nombre);
 	}

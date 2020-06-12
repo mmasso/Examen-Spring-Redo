@@ -7,7 +7,6 @@
  *  - Sin este commit tras cada caso, no corrijo el examen.
  */
 
-
 package org.elsmancs.practica;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,37 +46,30 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 /**
- * Construye una aplicacion que maneja una base de datos
- * de una liga o temporada de bolos,
- * con las personas usuarias (users) del servicio
- * y los torneos disponibles (items).
- * Las usuarias realizan subscripciones (ordenes) al servicio
- * para inscribirse en los campeonatos. 
+ * Construye una aplicacion que maneja una base de datos de una liga o temporada
+ * de bolos, con las personas usuarias (users) del servicio y los torneos
+ * disponibles (items). Las usuarias realizan subscripciones (ordenes) al
+ * servicio para inscribirse en los campeonatos.
  */
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@Sql(statements = {
-		"delete from t_ordenes",
-		"delete from t_items",
-		"delete from t_users",
+@Sql(statements = { "delete from t_ordenes", "delete from t_items", "delete from t_users",
 		"insert into t_users (user_nom, user_prop) values ('Munson', 15)",
 		"insert into t_users (user_nom, user_prop) values ('McCracken', 100)",
 		"insert into t_items (item_nom, item_prop, item_tipo) values ('Murfreesboro Strike and Spare', 20, 'Torneo')",
 		"insert into t_items (item_nom, item_prop, item_tipo) values ('Bowlerama Lanes Iowa', 7, 'Torneo')",
-		"insert into t_ordenes (ord_id, ord_user, ord_item) values (1,'Munson','Bowlerama Lanes Iowa')",
-})
+		"insert into t_ordenes (ord_id, ord_user, ord_item) values (1,'Munson','Bowlerama Lanes Iowa')", })
 @AutoConfigureMockMvc
 public class KingPinTest {
 
-    @PersistenceContext
+	@PersistenceContext
 	private EntityManager em;
 
 	@Autowired(required = false)
 	Repositorio repo;
-	
+
 	@Autowired(required = false)
 	Servicio servicio;
 
@@ -87,52 +79,49 @@ public class KingPinTest {
 	@Autowired(required = false)
 	Controlador controlador;
 
-
 	/**
 	 * Tests sobre los mappings
 	 * 
-	 * Observa el esquema de la base de datos que espera 
-	 * la aplicacion en el fichero:
-	 * src/main/resources/schema.sql
+	 * Observa el esquema de la base de datos que espera la aplicacion en el
+	 * fichero: src/main/resources/schema.sql
 	 */
-	
+
 	// Completa la definicion y el mapping
 	// de la clase Torneo a la tabla t_items
 	@Test
 	public void test_mapping_torneo() {
 		Torneo game = em.find(Torneo.class, "Bowlerama Lanes Iowa");
 		assertNotNull(game);
-		assertEquals("Bowlerama Lanes Iowa", game.getNombre()); //item_nom
-		assertEquals(7, game.getProfesionalidad(), 0); //item_prop
-		assertEquals("Torneo", game.getTipo()); //item_tipo
+		assertEquals("Bowlerama Lanes Iowa", game.getNombre()); // item_nom
+		assertEquals(7, game.getProfesionalidad(), 0); // item_prop
+		assertEquals("Torneo", game.getTipo()); // item_tipo
 	}
-	
+
 	// Completa la definicion y el mapping
 	// de la clase Usuaria a la tabla t_users
 	@Test
 	public void test_mapping_user() {
 		Usuaria roy = em.find(Usuaria.class, "Munson");
 		assertNotNull(roy);
-		assertEquals("Munson", roy.getNombre()); //user_nom
-		assertEquals(15, roy.getDestreza(), 0);  //user_prop
+		assertEquals("Munson", roy.getNombre()); // user_nom
+		assertEquals(15, roy.getDestreza(), 0); // user_prop
 	}
-	
 
-    // Completa la definicion y el mapping
+	// Completa la definicion y el mapping
 	// de la clase Orden (una subscripcion) a la tabla t_ordenes.
 	// El id de esta clase ha de seguir una estrategia
 	// Identity
-	@Test 
+	@Test
 	public void test_mapping_orden() {
 		Orden inscripcion = em.find(Orden.class, 1L);
 		assertNotNull(inscripcion);
-		assertEquals("Munson", inscripcion.getUser().getNombre()); //ord_user
-		assertEquals("Bowlerama Lanes Iowa", inscripcion.getItem().getNombre()); //ord_item
-		}
-	
+		assertEquals("Munson", inscripcion.getUser().getNombre()); // ord_user
+		assertEquals("Bowlerama Lanes Iowa", inscripcion.getItem().getNombre()); // ord_item
+	}
+
 	/**
-	 * Crea una clase llamada Repositorio e indica
-	 * que es un repositorio o componente de Spring 
+	 * Crea una clase llamada Repositorio e indica que es un repositorio o
+	 * componente de Spring
 	 */
 	@Test
 	public void test_repositorio_es_componente() {
@@ -140,8 +129,8 @@ public class KingPinTest {
 	}
 
 	/**
-	 * Implementa el metodo cargaUser del repositorio
-	 * que devuelve el usuario/a con el nombre indicado
+	 * Implementa el metodo cargaUser del repositorio que devuelve el usuario/a con
+	 * el nombre indicado
 	 */
 	@Test
 	public void test_carga_user() {
@@ -151,10 +140,10 @@ public class KingPinTest {
 		assertEquals("Munson", roy.getNombre());
 		assertEquals(15, roy.getDestreza());
 	}
-	
+
 	/**
-	 * Implementa el metodo cargaItem del repositorio
-	 * que devuelve el item (torneo) con el nombre indicado
+	 * Implementa el metodo cargaItem del repositorio que devuelve el item (torneo)
+	 * con el nombre indicado
 	 */
 	@Test
 	public void test_carga_item() {
@@ -164,17 +153,17 @@ public class KingPinTest {
 		assertEquals("Bowlerama Lanes Iowa", item.getNombre());
 		assertEquals(7, item.getProfesionalidad(), 0);
 	}
-	
+
 	/**
-     * Implementa el metodo ordenar del repositorio
-	 * que permite a un usuario/a dar la orden de 
-	 * subscribirse a un torneo (item).
-     * El usuario/a y el item/torneo ya existen en la bbdd (NO has de crearlos).
+	 * Implementa el metodo ordenar del repositorio que permite a un usuario/a dar
+	 * la orden de subscribirse a un torneo (item). El usuario/a y el item/torneo ya
+	 * existen en la bbdd (NO has de crearlos).
 	 * 
-     * El metodo devuelve la orden de subscripcion de tipo Orden creada.
-     * 
-     * Guarda la orden en la base de datos.
-	 * @throws NotEnoughProException 
+	 * El metodo devuelve la orden de subscripcion de tipo Orden creada.
+	 * 
+	 * Guarda la orden en la base de datos.
+	 * 
+	 * @throws NotEnoughProException
 	 */
 	@Test
 	@Transactional
@@ -186,12 +175,13 @@ public class KingPinTest {
 		assertEquals("McCracken", orden.getUser().getNombre());
 		assertEquals("Murfreesboro Strike and Spare", orden.getItem().getNombre());
 	}
-	
+
 	/**
-     * Implementa el metodo ordenar del repositorio
-	 * para que no permita generar ordenes de subscripcion a Torneos
-	 * si no existe el usuario/a en la base de datos.
-	 * @throws NotEnoughProException 
+	 * Implementa el metodo ordenar del repositorio para que no permita generar
+	 * ordenes de subscripcion a Torneos si no existe el usuario/a en la base de
+	 * datos.
+	 * 
+	 * @throws NotEnoughProException
 	 */
 	@Test
 	@Transactional
@@ -200,12 +190,12 @@ public class KingPinTest {
 		Orden orden = repo.ordenar("Ishmael", "Murfreesboro Strike and Spare");
 		assertNull(orden);
 	}
-	
+
 	/**
-     * Implementa el metodo ordenar del repositorio
-	 * para que no permita generar ordenes de subscripcion a Torneos
-	 * si no existe el Torneo en la base de datos.
-	 * @throws NotEnoughProException 
+	 * Implementa el metodo ordenar del repositorio para que no permita generar
+	 * ordenes de subscripcion a Torneos si no existe el Torneo en la base de datos.
+	 * 
+	 * @throws NotEnoughProException
 	 */
 	@Test
 	@Transactional
@@ -214,12 +204,11 @@ public class KingPinTest {
 		Orden orden = repo.ordenar("McCracken", "Dia de bolos con Amish");
 		assertNull(orden);
 	}
-	
+
 	/**
-	 * Modifica el metodo ordenar para que lance una excepcion
-	 * del tipo NotEnoughProException
-	 * cuando la destreza del usuario/a sea menor
-	 * a la profesionalidad del Torneo.
+	 * Modifica el metodo ordenar para que lance una excepcion del tipo
+	 * NotEnoughProException cuando la destreza del usuario/a sea menor a la
+	 * profesionalidad del Torneo.
 	 */
 	@org.junit.Test(expected = NotEnoughProException.class)
 	@Transactional
@@ -228,13 +217,13 @@ public class KingPinTest {
 		repo.ordenar("Munson", "Murfreesboro Strike and Spare");
 		Assert.fail();
 	}
-	
+
 	/**
-	 * Implementa el metodo ordenarMultiple para que un usuario/a
-	 * pueda ordenar más de una subscripcion a un Torneo a la vez.
-	 * Guarda las ordenes en la base de datos.
-     * 
-     * No se permiten ordenes si el usuario no existe en la base de datos.
+	 * Implementa el metodo ordenarMultiple para que un usuario/a pueda ordenar más
+	 * de una subscripcion a un Torneo a la vez. Guarda las ordenes en la base de
+	 * datos.
+	 * 
+	 * No se permiten ordenes si el usuario no existe en la base de datos.
 	 * 
 	 * No se ordenan items que no existen en la base de datos.
 	 */
@@ -242,39 +231,42 @@ public class KingPinTest {
 	@Transactional
 	public void test_ordenar_multiples_items() {
 		assertNotNull(repo);
-		List<Orden> ordenes = repo.ordenarMultiple("McCracken", Arrays.asList("Murfreesboro Strike and Spare", "Bowlerama Lanes Iowa"));
+		List<Orden> ordenes = repo.ordenarMultiple("McCracken",
+				Arrays.asList("Murfreesboro Strike and Spare", "Bowlerama Lanes Iowa"));
 		assertNotNull(ordenes);
 
 		assertEquals(2, ordenes.size());
 		assertFalse(ordenes.contains(null));
 
 		// no se permiten ordenes si el usuario no existe en la base de datos
-		ordenes = repo.ordenarMultiple("Ishmael", Arrays.asList("Murfreesboro Strike and Spare", "Bowlerama Lanes Iowa"));
+		ordenes = repo.ordenarMultiple("Ishmael",
+				Arrays.asList("Murfreesboro Strike and Spare", "Bowlerama Lanes Iowa"));
 		assertTrue(ordenes.isEmpty());
 		assertEquals(0, ordenes.size());
 
 		// no se ordenan items que no existen en la base de datos
-		ordenes = repo.ordenarMultiple("McCracken", Arrays.asList("Murfreesboro Strike and Spare", "Dia de bolos con Amish"));
+		ordenes = repo.ordenarMultiple("McCracken",
+				Arrays.asList("Murfreesboro Strike and Spare", "Dia de bolos con Amish"));
 		assertEquals(1, ordenes.size());
 	}
-	
+
 	/**
-	 * Implementa un Servicio con el metodo listarOrdenesUser.
-	 * Lista las ordenes que ha generado una determinada Usuaria.
+	 * Implementa un Servicio con el metodo listarOrdenesUser. Lista las ordenes que
+	 * ha generado una determinada Usuaria.
 	 * 
-	 * Has de implementar el servicio e indicar
-	 * que es un componente Spring.
+	 * Has de implementar el servicio e indicar que es un componente Spring.
 	 */
-    @Test
-    @Transactional
+	@Test
+	@Transactional
 	public void test_listar_ordenes_user() {
 
-        assertNotNull(repo);
-        
-        // Has de crear el servicio e indicar que es un componente Spring.
-        assertNotNull(servicio);
-        
-		List<Orden> ordenes = repo.ordenarMultiple("McCracken", Arrays.asList("Murfreesboro Strike and Spare", "Bowlerama Lanes Iowa"));
+		assertNotNull(repo);
+
+		// Has de crear el servicio e indicar que es un componente Spring.
+		assertNotNull(servicio);
+
+		List<Orden> ordenes = repo.ordenarMultiple("McCracken",
+				Arrays.asList("Murfreesboro Strike and Spare", "Bowlerama Lanes Iowa"));
 		assertNotNull(ordenes);
 
 		assertEquals(2, ordenes.size());
@@ -284,47 +276,41 @@ public class KingPinTest {
 		assertEquals(2, ordenes.size());
 		assertFalse(ordenes.contains(null));
 	}
-    
-	/**
-	 * Añade una clase controlador para hacer peticiones web
-	 * a nuestra app. 
-	 * Anotala para que sea un controlador de Spring.
-     */
-    @Test
-    public void test_controlador() {
-    	assertNotNull(controlador);
-	}
-    
-	/**
-     * La peticion /usuaria/<nombre>
-     * ha de retornar el nombre y la destreza de la persona 
-	 * indicada de la base de datos.
-     */
-    @Test
-    public void test_get_persona() throws Exception {
 
-		mockMvc.perform(get("/usuaria/McCracken").accept(MediaType.APPLICATION_JSON))
-		.andExpect(status().isOk())
-		.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(content().json("{nombre : 'McCracken', destreza: 100}"));
-	}
-    
 	/**
-     * Da de alta una orden de inscripción empleando sólo el método POST en la url
-     *    /ordena
-     * Los parametros post necesarios son "usuaria" con el nombre de la persona
-	 * e "item" con el nombre del torneo.
-     * La peticion ha de retornar el texto "OK" si la orden de inscripción ha sido generada
-	 * y "KO" en caso contrario.
-     */
+	 * Añade una clase controlador para hacer peticiones web a nuestra app. Anotala
+	 * para que sea un controlador de Spring.
+	 */
 	@Test
-    public void test_post() throws Exception {
+	public void test_controlador() {
+		assertNotNull(controlador);
+	}
 
-		this.mockMvc.perform(post("/ordena")
-		.param("usuaria", "McCracken")
-		.param("item", "Murfreesboro Strike and Spare"))
-		.andExpect(status().isOk())
-		.andExpect(content().string("OK"));
+	/**
+	 * La peticion /usuaria/<nombre> ha de retornar el nombre y la destreza de la
+	 * persona indicada de la base de datos.
+	 */
+	@Test
+	public void test_get_persona() throws Exception {
+
+		mockMvc.perform(get("/usuaria/McCracken").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(content().json("{nombre : 'McCracken', destreza: 100}"));
+	}
+
+	/**
+	 * Da de alta una orden de inscripción empleando sólo el método POST en la url
+	 * /ordena Los parametros post necesarios son "usuaria" con el nombre de la
+	 * persona e "item" con el nombre del torneo. La peticion ha de retornar el
+	 * texto "OK" si la orden de inscripción ha sido generada y "KO" en caso
+	 * contrario.
+	 */
+	@Test
+	public void test_post() throws Exception {
+
+		this.mockMvc
+				.perform(post("/ordena").param("usuaria", "McCracken").param("item", "Murfreesboro Strike and Spare"))
+				.andExpect(status().isOk()).andExpect(content().string("OK"));
 
 		// La orden se ha guardado en la BBDD
 		List<Orden> ordenes = servicio.listarOrdenesUser("McCracken");
@@ -332,25 +318,18 @@ public class KingPinTest {
 		assertFalse(ordenes.contains(null));
 
 		// Si la usuaria no existe el controlador devuelve el texto "KO"
-		this.mockMvc.perform(post("/ordena")
-		.param("usuaria", "Ishmael")
-		.param("item", "Murfreesboro Strike and Spare"))
-		.andExpect(status().isOk()).andExpect(content().string("KO"));
+		this.mockMvc.perform(post("/ordena").param("usuaria", "Ishmael").param("item", "Murfreesboro Strike and Spare"))
+				.andExpect(status().isOk()).andExpect(content().string("KO"));
 	}
-	
-    /**
-     * Asegurate de que en la URl /ordena
-     * solo se reciben peticiones POST
-     */
-    @Test
-    public void test_post_error() throws Exception {
- 
-		this.mockMvc.perform(get("/ordena")
-		.param("usuaria", "Ishmael")
-		.param("item", "Murfreesboro Strike and Spare"))
-		.andExpect(status().is4xxClientError());
-    }
 
+	/**
+	 * Asegurate de que en la URl /ordena solo se reciben peticiones POST
+	 */
+	@Test
+	public void test_post_error() throws Exception {
 
-	
-} 
+		this.mockMvc.perform(get("/ordena").param("usuaria", "Ishmael").param("item", "Murfreesboro Strike and Spare"))
+				.andExpect(status().is4xxClientError());
+	}
+
+}
