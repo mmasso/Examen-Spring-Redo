@@ -284,6 +284,16 @@ public class KingPinTest {
 		assertEquals(2, ordenes.size());
 		assertFalse(ordenes.contains(null));
 	}
+    
+	/**
+	 * Añade una clase controlador para hacer peticiones web
+	 * a nuestra app. 
+	 * Anotala para que sea un controlador de Spring.
+     */
+    @Test
+    public void test_controlador() {
+    	assertNotNull(controlador);
+	}
 
 
 	
