@@ -337,6 +337,19 @@ public class KingPinTest {
 		.param("item", "Murfreesboro Strike and Spare"))
 		.andExpect(status().isOk()).andExpect(content().string("KO"));
 	}
+	
+    /**
+     * Asegurate de que en la URl /ordena
+     * solo se reciben peticiones POST
+     */
+    @Test
+    public void test_post_error() throws Exception {
+ 
+		this.mockMvc.perform(get("/ordena")
+		.param("usuaria", "Ishmael")
+		.param("item", "Murfreesboro Strike and Spare"))
+		.andExpect(status().is4xxClientError());
+    }
 
 
 	
