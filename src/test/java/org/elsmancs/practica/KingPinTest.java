@@ -226,10 +226,11 @@ public class KingPinTest {
 	 * No se permiten ordenes si el usuario no existe en la base de datos.
 	 * 
 	 * No se ordenan items que no existen en la base de datos.
+	 * @throws NotEnoughProException 
 	 */
 	@Test
 	@Transactional
-	public void test_ordenar_multiples_items() {
+	public void test_ordenar_multiples_items() throws NotEnoughProException {
 		assertNotNull(repo);
 		List<Orden> ordenes = repo.ordenarMultiple("McCracken",
 				Arrays.asList("Murfreesboro Strike and Spare", "Bowlerama Lanes Iowa"));
@@ -255,10 +256,11 @@ public class KingPinTest {
 	 * ha generado una determinada Usuaria.
 	 * 
 	 * Has de implementar el servicio e indicar que es un componente Spring.
+	 * @throws NotEnoughProException 
 	 */
 	@Test
 	@Transactional
-	public void test_listar_ordenes_user() {
+	public void test_listar_ordenes_user() throws NotEnoughProException {
 
 		assertNotNull(repo);
 

@@ -33,39 +33,32 @@ public class Repositorio {
 
 	@Transactional
 	public Orden ordenar(String nomUser, String nomItem) throws NotEnoughProException {
-		Usuaria user = em.find(Usuaria.class, nomUser);
-		Torneo torneig = em.find(Torneo.class, nomItem);
-		if (user != null & torneig != null) {
+		Usuaria user = this.cargaUser(nomUser);
+		Torneo torneig = this.cargaItem(nomItem);
+		if (user != null && torneig != null) {
 			if (user.getDestreza() < torneig.getProfesionalidad()) {
 				throw new NotEnoughProException();
 			}
-			if (em.contains(user) & em.contains(torneig)) {
-				Orden subscripcion = new Orden();
-				subscripcion.setUser(user);
-				subscripcion.setItem(torneig);
-				em.persist(subscripcion);
-				return subscripcion;
-			}
+			Orden subscripcion = new Orden();
+			subscripcion.setUser(user);
+			subscripcion.setItem(torneig);
+			em.persist(subscripcion);
+			return subscripcion;
 		}
 		return null;
 	}
 
-	public List<Orden> ordenarMultiple(String nom, List<String> torneigs) {
-		Usuaria user = em.find(Usuaria.class, nom);
+	public List<Orden> ordenarMultiple(String nom, List<String> torneigs) throws NotEnoughProException {
+		Usuaria user = this.cargaUser(nom);
 		List<Orden> ordenes = new ArrayList<Orden>();
 		if (em.contains(user)) {
 			for (String nomTorneig : torneigs) {
 				Torneo torneig = em.find(Torneo.class, nomTorneig);
 				if (em.contains(torneig)) {
-					Orden subscripcion = new Orden();
-					subscripcion.setUser(user);
-					subscripcion.setItem(torneig);
-					em.persist(subscripcion);
-					ordenes.add(subscripcion);
+					ordenes.add(this.ordenar(nom, nomTorneig));
 				}
 			}
 		}
-
 		return ordenes;
 	}
 
